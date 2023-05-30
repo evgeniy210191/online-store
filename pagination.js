@@ -63,7 +63,7 @@ export default class Pagination {
     if (nextActivePage) {
       nextActivePage.classList.add('active')
     }
-
+    this.dispatchEvent(pageIndex)
     this.activePageIndex = pageIndex
   }
 
@@ -96,9 +96,13 @@ export default class Pagination {
 
     pagesList.addEventListener('click', (event) => {
       const pageItem = event.target.closest('.page_link')
+
       if (!pageItem) return
+      if (pageItem === this.element.querySelector('.page_link.active')) {
+        event.preventDefault()
+        return
+      }
       const { pageIndex } = pageItem.dataset
-      this.dispatchEvent(pageIndex)
 
       this.setPage(parseInt(pageIndex, 10))
     })
