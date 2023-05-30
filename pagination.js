@@ -1,17 +1,13 @@
 export default class Pagination {
-  
-	constructor ({
-    activePageIndex = 0,
-    totalPages = 0
-  } = {}) {
+  constructor({ activePageIndex = 0, totalPages = 0 } = {}) {
     this.activePageIndex = activePageIndex
     this.totalPages = totalPages
     this.render()
-    
-    this.addEventListeners ()
+
+    this.addEventListeners()
   }
 
-  getTempLate () {
+  getTempLate() {
     return `
       <nav>
         <a href="#" data-element="nav-prev" class="page_link prev">
@@ -26,17 +22,22 @@ export default class Pagination {
           </svg>
         </a>
       </nav>
-    `;
+    `
   }
 
   getPages() {
     return `
         <ul data-element="pagination">
-          ${new Array(this.totalPages).fill(1).map((item, index) => {return this.getPageTemplate(index);}).join('')}
-        </ul>`;
+          ${new Array(this.totalPages)
+            .fill(1)
+            .map((item, index) => {
+              return this.getPageTemplate(index)
+            })
+            .join('')}
+        </ul>`
   }
   getPageTemplate(pageIndex = 0) {
-    const isActive = pageIndex === this.activePageIndex ? 'active' : '';
+    const isActive = pageIndex === this.activePageIndex ? 'active' : ''
     return `<li>
       <a href="#" 
         data-element="page_link" 
@@ -44,21 +45,20 @@ export default class Pagination {
         data-page-index="${pageIndex}">
         ${pageIndex + 1}
       </a>
-    </li>`;
+    </li>`
   }
 
   setPage(pageIndex = 0) {
-    if (pageIndex === this.activePageIndex) return;
-    if (pageIndex > this.totalPages - 1 || pageIndex < 0) return;
-
-    this.dispatchEvent(pageIndex)
-
-    const activePage = this.element.querySelector('.page_link.active');
+    const activePage = this.element.querySelector('.page_link.active')
+    if (pageIndex === this.activePageIndex) return
+    if (pageIndex > this.totalPages - 1 || pageIndex < 0) return
 
     if (activePage) {
-      activePage.classList.remove('active');
+      activePage.classList.remove('active')
     }
-    const nextActivePage = this.element.querySelector(`[data-page-index="${pageIndex}"]`)
+    const nextActivePage = this.element.querySelector(
+      `[data-page-index="${pageIndex}"]`
+    )
 
     if (nextActivePage) {
       nextActivePage.classList.add('active')
@@ -68,17 +68,16 @@ export default class Pagination {
   }
 
   nextPage() {
-    const nextPageIndex = this.activePageIndex + 1;
+    const nextPageIndex = this.activePageIndex + 1
     this.setPage(nextPageIndex)
   }
 
   prevPage() {
-    const prevPageIndex = this.activePageIndex - 1;
+    const prevPageIndex = this.activePageIndex - 1
     this.setPage(prevPageIndex)
   }
 
-
-	render() {
+  render() {
     const addPagination = document.createElement('div')
     addPagination.innerHTML = this.getTempLate()
     this.element = addPagination
@@ -92,24 +91,22 @@ export default class Pagination {
       this.prevPage()
     })
     nextPageBtn.addEventListener('click', () => {
-      this.nextPage() 
+      this.nextPage()
     })
 
-    pagesList.addEventListener('click', event => {
+    pagesList.addEventListener('click', (event) => {
       const pageItem = event.target.closest('.page_link')
-      if (!pageItem) return;
-      const { pageIndex } = pageItem.dataset;
+      if (!pageItem) return
+      const { pageIndex } = pageItem.dataset
       this.dispatchEvent(pageIndex)
 
       this.setPage(parseInt(pageIndex, 10))
     })
-  } 
-    dispatchEvent (pageIndex) {
-      const customEvent = new CustomEvent('page-changed', {
-        detail: pageIndex
-      })
-      this.element.dispatchEvent(customEvent)
-    }
-  
-  
+  }
+  dispatchEvent(pageIndex) {
+    const customEvent = new CustomEvent('page-changed', {
+      detail: pageIndex,
+    })
+    this.element.dispatchEvent(customEvent)
+  }
 }
